@@ -31,10 +31,10 @@ const ruleOptionsEnable = {
 };
 
 /**
- * 节点组配置
+ * 节点组配置，用于分类地区节点和倍率节点
+ * 未启用的节点组将不会被生成，且该节点组的节点会被分类到其他节点组中
  * true = 启用
  * false = 禁用
- * 未启用的节点组将不会被生成，且该节点组的节点会被分类到其他节点组中
  */
 const regionDefinitionsEnable = {
   '🇭🇰 香港': true,
@@ -53,9 +53,17 @@ const regionDefinitionsEnable = {
   '✈️ 高倍率节点': true,
 };
 
-// 定义全局排除节点的正则表达式
+/**
+ * 全局排除节点过滤配置
+ * 该配置用于启用全局排除节点过滤功能
+ * true = 启用
+ * false = 禁用
+ */
+const excludeFilterEnable = true;
+
+// 定义全局排除节点的正则表达式，用于排除非地区的信息节点
 const excludeFilter =
-  /群|返利|循环|官网|客服|网站|网址|获取|订阅|流量|到期|机场|下次|版本|官址|备用|过期|已用|联系|邮箱|工单|贩卖|通知|倒卖|防止|国内|地址|频道|无法|说明|使用|提示|特别|访问|支持|教程|关注|更新|作者|加入|超时|收藏|福利|邀请|好友|失联|选择|剩余|公益|发布|DIZTNA|通路|登录|禁止|定时|渠道|牢记|永久|余额|阁下|本站|刷新|导航|⚠️|@|Expire|http|com/iu;
+  /群|返利|循环|官网|客服|网站|网址|获取|订阅|流量|到期|机场|下次|版本|官址|备用|过期|已用|联系|邮箱|工单|贩卖|通知|倒卖|防止|国内|地址|频道|无法|说明|使用|提示|特别|访问|支持|教程|关注|更新|作者|加入|超时|收藏|福利|邀请|好友|失联|选择|剩余|公益|发布|DIZTNA|通路|登录|禁止|定时|渠道|牢记|永久|余额|阁下|本站|刷新|导航|⚠️|@|Expire|http|com/u;
 
 // rules 预定义
 const rules = [
@@ -73,7 +81,7 @@ const rules = [
   'RULE-SET,microsoft_cn,直连',
 ];
 
-// 地区定义
+// 定义节点组
 const regionDefinitions = [
   {
     name: '🇭🇰 香港',
@@ -147,16 +155,6 @@ const regionDefinitions = [
     icon: 'https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Airport.png',
   },
 ];
-
-// 策略组通用配置
-const groupBaseOption = {
-  interval: 600,
-  timeout: 3000,
-  url: 'https://www.gstatic.com/generate_204',
-  lazy: false,
-  'max-failed-times': 3,
-  hidden: false,
-};
 
 // Rule Providers 通用配置
 const ruleProviderFormatYaml = { format: 'yaml' };
@@ -351,7 +349,18 @@ const ruleProviders = {
   },
 };
 
-// --- 2. 服务规则数据结构 ---
+// --- 2. 功能策略组数据结构 ---
+
+// 策略组通用配置
+const groupBaseOption = {
+  interval: 600,
+  timeout: 3000,
+  url: 'https://www.gstatic.com/generate_204',
+  lazy: false,
+  'max-failed-times': 3,
+  hidden: false,
+};
+
 const serviceConfigs = [
   {
     key: 'ai',
@@ -364,8 +373,7 @@ const serviceConfigs = [
     name: 'YouTube',
     icon: 'https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/YouTube.png',
     rules: [
-      // 阻断 YouTube UDP 流量
-      'AND,((NETWORK,UDP),(DST-PORT,443),(RULE-SET,youtube)),REJECT',
+      'AND,((NETWORK,UDP),(DST-PORT,443),(RULE-SET,youtube)),REJECT', // 阻断 YouTube UDP 流量
       'RULE-SET,youtube,YouTube',
     ],
   },
@@ -461,17 +469,10 @@ function main(config) {
   if (!enable) return config;
 
   // 排除匹配到的节点
-  if (config.proxies && Array.isArray(config.proxies)) {
+  if (config.proxies && Array.isArray(config.proxies) && excludeFilterEnable) {
     config.proxies = config.proxies.filter(
       (proxy) => !excludeFilter.test(proxy.name),
     );
-  }
-
-  // 为生成后的配置加上过滤字段（如果 proxy-providers 存在）
-  if (config['proxy-providers']) {
-    Object.keys(config['proxy-providers']).forEach((key) => {
-      config['proxy-providers'][key]['exclude-filter'] = excludeFilter.source;
-    });
   }
 
   const proxies = config?.proxies || [];
