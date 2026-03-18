@@ -60,7 +60,7 @@ https://raw.githubusercontent.com/AIsouler/MyClash/refs/heads/main/Script/mihomo
 
 ## 内置节点组
 
-> - _所有组均为自动选择（url-test）_
+> - _所有组均为手动选择（select），内部包含对应的自动选择策略组_
 > - _若不需要某个节点组，可在脚本中将对应开关设为 `false`_
 > - _若机场订阅中不存在对应节点组的节点，则该节点组不会显示_
 > - _未匹配节点组或未启用节点组的节点，将统一归类至 「其他节点」_
