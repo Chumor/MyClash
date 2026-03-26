@@ -614,6 +614,7 @@ function main(config) {
     'RULE-SET,epicgames,直连',
     'RULE-SET,nvidia_cn,直连',
     'RULE-SET,microsoft_cn,直连',
+    'DOMAIN-SUFFIX,fsend.cn,直连',
 
     // 广告拦截
     'RULE-SET,adblockmihomolite,广告拦截',
