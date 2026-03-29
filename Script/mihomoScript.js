@@ -775,6 +775,7 @@ function main(config) {
     'dns.alidns.com': ['223.5.5.5', '223.6.6.6'],
     'doh.pub': ['1.12.12.21', '120.53.53.53'],
     'dns.google': ['8.8.8.8', '8.8.4.4'],
+    'services.googleapis.cn': ['services.googleapis.com'],
   };
 
   config['sniffer'] = {
