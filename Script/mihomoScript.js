@@ -660,6 +660,13 @@ function main(config) {
           '全局自动选择',
           ...regionGroupNames,
         ];
+      } else if (svc.key === 'spotify') {
+        groupProxies = [
+          '默认节点',
+          '全局自动选择',
+          '直连',
+          ...regionGroupNames,
+        ];
       } else {
         groupProxies = ['默认节点', '全局自动选择', ...regionGroupNames];
       }
