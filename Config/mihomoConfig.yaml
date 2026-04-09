@@ -7,7 +7,7 @@ proxy_providers_common:
     health-check:
       {
         enable: true,
-        url: https://www.gstatic.com/generate_204,
+        url: https://g.cn/generate_204,
         interval: 600,
         lazy: false,
       },
@@ -68,7 +68,9 @@ dns:
     - '*'
     - 'rule-set:cn'
     - 'rule-set:private'
+    - 'rule-set:category_ntp'
     - 'rule-set:fakeip_filter'
+    - 'rule-set:connectivity_check'
   default-nameserver:
     - '114.114.114.114' # 国内主流的、免费的公共DNS
   nameserver:
@@ -78,9 +80,9 @@ dns:
   nameserver-policy:
     '*': 'system'
     '+.arpa': 'system'
-    'rule-set:private': 'system'
-    'rule-set:cn': '119.29.29.29' # 腾讯提供的公共DNS
     '+.internal.crop.com': '10.0.0.1'
+    'connectivitycheck.platform.hicloud.com,g.cn,fsend.cn': 'system'
+    'rule-set:private,cn,steam_cn,epicgames,nvidia_cn,microsoft_cn,microsoft,googlefcm,apple,spotify': 'system'
 
 hosts:
   'services.googleapis.cn': ['services.googleapis.com']
@@ -257,6 +259,14 @@ rule-providers:
     <<: *rp_domain
     format: mrs
     url: 'https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/apple.mrs'
+  connectivity_check:
+    <<: *rp_domain
+    format: mrs
+    url: 'https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/connectivity-check.mrs'
+  category_ntp:
+    <<: *rp_domain
+    format: mrs
+    url: 'https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/category-ntp.mrs'
 
 # --- 策略组 (Proxy Groups) ---
 
@@ -266,7 +276,7 @@ group_common_select:
     type: select,
     interval: 600,
     timeout: 3000,
-    url: 'https://www.gstatic.com/generate_204',
+    url: 'https://g.cn/generate_204',
     lazy: false,
     max-failed-times: 3,
   }
@@ -278,7 +288,7 @@ group_common_auto:
     type: url-test,
     tolerance: 100,
     include-all: true,
-    url: 'https://www.gstatic.com/generate_204',
+    url: 'https://g.cn/generate_204',
     lazy: false,
     max-failed-times: 3,
     icon: 'https://fastly.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Auto.png',
@@ -368,7 +378,7 @@ proxy-groups:
 
   - name: '广告拦截'
     <<: *group_common_select
-    proxies: ['REJECT', 'REJECT-DROP', 'PASS', '直连', '默认节点']
+    proxies: ['REJECT', 'REJECT-DROP', 'PASS']
     icon: 'https://fastly.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Advertising.png'
 
   - name: '下载专用'

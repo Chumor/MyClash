@@ -346,6 +346,18 @@ const ruleProviders = {
     url: 'https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/apple.mrs',
     path: './ruleset/apple.mrs',
   },
+  connectivity_check: {
+    ...ruleProviderCommonDomain,
+    ...ruleProviderFormatMrs,
+    url: 'https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/connectivity-check.mrs',
+    path: './ruleset/connectivity-check.mrs',
+  },
+  category_ntp: {
+    ...ruleProviderCommonDomain,
+    ...ruleProviderFormatMrs,
+    url: 'https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/category-ntp.mrs',
+    path: './ruleset/category-ntp.mrs',
+  },
 };
 
 // --- 2. 功能策略组数据结构 ---
@@ -354,7 +366,7 @@ const ruleProviders = {
 const groupBaseOption = {
   interval: 600,
   timeout: 3000,
-  url: 'https://www.gstatic.com/generate_204',
+  url: 'https://g.cn/generate_204',
   lazy: false,
   'max-failed-times': 3,
   hidden: false,
@@ -620,7 +632,7 @@ function main(config) {
 
       let groupProxies;
       if (svc.reject) {
-        groupProxies = ['REJECT', 'REJECT-DROP', 'PASS', '直连', '默认节点'];
+        groupProxies = ['REJECT', 'REJECT-DROP', 'PASS'];
       } else if (
         svc.key === 'microsoft' ||
         svc.key === 'apple' ||
@@ -732,7 +744,9 @@ function main(config) {
       '*',
       'rule-set:cn',
       'rule-set:private',
+      'rule-set:category_ntp',
       'rule-set:fakeip_filter',
+      'rule-set:connectivity_check',
     ],
     'default-nameserver': ['114.114.114.114'], // 国内主流的、免费的公共DNS
     nameserver: ['1.1.1.1'], // Cloudflare提供的公共DNS
@@ -740,9 +754,10 @@ function main(config) {
     'nameserver-policy': {
       '*': 'system',
       '+.arpa': 'system',
-      'rule-set:private': 'system',
-      'rule-set:cn': '119.29.29.29', // 腾讯提供的公共DNS
       '+.internal.crop.com': '10.0.0.1',
+      'connectivitycheck.platform.hicloud.com,g.cn,fsend.cn': 'system',
+      'rule-set:private,cn,steam_cn,epicgames,nvidia_cn,microsoft_cn,microsoft,googlefcm,apple,spotify':
+        'system',
     },
   };
 
