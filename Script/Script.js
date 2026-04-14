@@ -604,7 +604,6 @@ function main(config) {
     'RULE-SET,epicgames,直连',
     'RULE-SET,nvidia_cn,直连',
     'RULE-SET,microsoft_cn,直连',
-    'DOMAIN-SUFFIX,fsend.cn,直连',
 
     // 进程规则
     'PROCESS-NAME,com.perol.pixez,Pixiv', // Pixez
@@ -634,6 +633,7 @@ function main(config) {
     // 兜底规则
     'RULE-SET,gfw,默认节点',
     'RULE-SET,cn,直连',
+    'DOMAIN-WILDCARD,*.cn,直连',
     'RULE-SET,cn_ip,直连',
     'MATCH,默认节点',
   ];
