@@ -54,6 +54,9 @@ proxies:
   - { name: '🇨🇳 直连（IPv6优先）', type: direct, ip-version: ipv6-prefer }
   - { name: '🇨🇳 直连（双栈）', type: direct }
 
+chinaDNS:
+  &chinaDNS ['https://doh.pub/dns-query', 'https://dns.alidns.com/dns-query']
+
 dns:
   enable: true
   ipv6: false
@@ -63,6 +66,7 @@ dns:
   use-system-hosts: true
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
+  fake-ip-range-v6: 'fc00::/18'
   fake-ip-filter:
     - '*'
     - 'rule-set:private'
@@ -88,8 +92,9 @@ dns:
     '*': 'system'
     '+.arpa': 'system'
     '+.internal.crop.com': '10.0.0.1'
-    'rule-set:private,cn,steam_cn,epicgames,nvidia_cn,cloudflare_cn,microsoft_cn,microsoft,googlefcm,apple,spotify':
-      ['223.5.5.5', '119.29.29.29']
+    'connectivitycheck.platform.hicloud.com': *chinaDNS
+    '+.cn': *chinaDNS
+    'rule-set:private,cn,steam_cn,epicgames,nvidia_cn,cloudflare_cn,microsoft_cn,microsoft,googlefcm,apple,spotify': *chinaDNS
 
 hosts:
   'services.googleapis.cn': ['services.googleapis.com']
@@ -226,7 +231,7 @@ rule-providers:
   cn:
     <<: *rp_domain
     format: mrs
-    url: 'https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/cn.mrs'
+    url: 'https://static-file-global.353355.xyz/rules/cn-additional-list.mrs'
   cn_ip:
     <<: *rp_ip
     format: mrs

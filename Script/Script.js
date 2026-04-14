@@ -34,7 +34,7 @@ const regionDefinitions = [
   {
     name: '高倍率节点',
     regex:
-      /(?:[*xX✕✖⨉]\s*(?:[2-9]\d*|[1-9]\d+)(?:\.\d+)?)|(?:(?<![\d.])(?:[2-9]\d*|[1-9]\d+)(?:\.\d+)?\s*(?:倍|[*xX✕✖⨉]))/u,
+      /(?:[*×xX✕✖⨉]\s*(?:[2-9]\d*|[1-9]\d+)(?:\.\d+)?)|(?:(?<![\d.])(?:[2-9]\d*|[1-9]\d+)(?:\.\d+)?\s*(?:倍|[*×xX✕✖⨉]))/u,
     icon: 'https://fastly.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Airport.png',
   },
 ];
@@ -197,7 +197,7 @@ const ruleProviders = {
   cn: {
     ...ruleProviderCommonDomain,
     ...ruleProviderFormatMrs,
-    url: 'https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/cn.mrs',
+    url: 'https://static-file-global.353355.xyz/rules/cn-additional-list.mrs',
     path: './ruleset/cn.mrs',
   },
   cn_ip: {
@@ -503,6 +503,11 @@ function main(config) {
   };
 
   // DNS 配置
+  const chinaDNS = [
+    'https://doh.pub/dns-query',
+    'https://dns.alidns.com/dns-query',
+  ];
+
   config['dns'] = {
     enable: true,
     ipv6: false,
@@ -512,6 +517,7 @@ function main(config) {
     'use-system-hosts': true,
     'enhanced-mode': 'fake-ip',
     'fake-ip-range': '198.18.0.1/16',
+    'fake-ip-range-v6': 'fc00::/18',
     'fake-ip-filter': [
       '*',
       'rule-set:private',
@@ -531,8 +537,10 @@ function main(config) {
       '*': 'system',
       '+.arpa': 'system',
       '+.internal.crop.com': '10.0.0.1',
+      'connectivitycheck.platform.hicloud.com': [...chinaDNS],
+      '+.cn': [...chinaDNS],
       'rule-set:private,cn,steam_cn,epicgames,nvidia_cn,microsoft_cn,microsoft,apple':
-        ['223.5.5.5', '119.29.29.29'],
+        [...chinaDNS],
     },
   };
 
