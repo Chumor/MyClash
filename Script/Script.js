@@ -502,9 +502,28 @@ function main(config) {
     'store-fake-ip': true,
   };
 
-  // DNS 配置
-  const chinaDNS = ['system', '223.5.5.5', '119.29.29.29'];
+  // 国内外 DNS 定义
+  const chinaDNS = [
+    'system',
+    'https://dns.alidns.com/dns-query',
+    'https://doh.pub/dns-query',
+  ];
+  const foreignDNS = [
+    'https://1.1.1.1/dns-query#默认节点',
+    'https://8.8.8.8/dns-query#默认节点',
+  ];
 
+  // 直连规则集列表
+  const direct_rules = [
+    'private',
+    'cn',
+    'steam_cn',
+    'epicgames',
+    'nvidia_cn',
+    'microsoft_cn',
+  ];
+
+  // DNS 配置
   config['dns'] = {
     enable: true,
     ipv6: true,
@@ -517,33 +536,34 @@ function main(config) {
     'fake-ip-range-v6': 'fc00::/18',
     'fake-ip-filter': [
       '+.cn',
-      'rule-set:private',
       'rule-set:category_ntp',
       'rule-set:fakeip_filter',
       'rule-set:connectivity_check',
-      'rule-set:cn',
-      'rule-set:steam_cn',
-      'rule-set:epicgames',
-      'rule-set:nvidia_cn',
-      'rule-set:microsoft_cn',
+      ...direct_rules.map((rule) => `rule-set:${rule}`),
     ],
-    'proxy-server-nameserver': ['https://doh.pub/dns-query#DIRECT'],
+    'proxy-server-nameserver': [
+      'https://doh.pub/dns-query#DIRECT',
+      'https://dns.alidns.com/dns-query#DIRECT',
+    ],
     'default-nameserver': ['223.5.5.5', '119.29.29.29'],
-    nameserver: ['1.1.1.1', '8.8.8.8'],
+    nameserver: [...foreignDNS],
     'nameserver-policy': {
       '*': 'system',
       '+.arpa': 'system',
-      'connectivitycheck.platform.hicloud.com': 'system',
       '+.cn': [...chinaDNS],
-      'rule-set:private,cn,steam_cn,epicgames,nvidia_cn,microsoft_cn,microsoft,apple':
-        [...chinaDNS],
+      [`rule-set:${[...direct_rules, 'microsoft', 'apple'].join(',')}`]: [
+        ...chinaDNS,
+      ],
     },
-    'direct-nameserver:': [...chinaDNS],
+    'direct-nameserver': ['system', '223.5.5.5', '119.29.29.29'],
     'direct-nameserver-follow-policy': true,
   };
 
   // hosts 配置
   config['hosts'] = {
+    'dns.alidns.com': ['223.5.5.5', '223.6.6.6'],
+    'doh.pub': ['1.12.12.21', '120.53.53.53'],
+
     // 解决谷歌商店无法下载的问题
     'services.googleapis.cn': ['services.googleapis.com'],
 
