@@ -834,7 +834,7 @@ function main(config) {
   };
 
   config['sniffer'] = {
-    enable: true,
+    enable: false,
     'force-dns-mapping': true,
     'parse-pure-ip': true,
     'override-destination': false,

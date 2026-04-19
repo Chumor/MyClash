@@ -117,7 +117,7 @@ hosts:
   '+.mcdn.bilivideo.cn': ['0.0.0.0']
 
 sniffer:
-  enable: true
+  enable: false
   force-dns-mapping: true
   parse-pure-ip: true
   override-destination: false
