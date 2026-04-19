@@ -15,6 +15,7 @@ const enable = true;
  * false = 禁用
  */
 const ruleOptionsEnable = {
+  captcha: true, // 人机验证，建议选择高质量节点，提高一次通过的概率
   ai: true, // 国外AI服务
   youtube: true, // YouTube
   googlefcm: true, // FCM服务
@@ -364,6 +365,12 @@ const ruleProviders = {
     url: 'https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/category-ntp.mrs',
     path: './ruleset/category-ntp.mrs',
   },
+  captcha: {
+    ...ruleProviderCommonDomain,
+    ...ruleProviderFormatMrs,
+    url: 'https://fastly.jsdelivr.net/gh/echs-top/proxy@main/rules/mrs/captcha_domain.mrs',
+    path: './ruleset/captcha.mrs',
+  },
 };
 
 // --- 2. 功能策略组数据结构 ---
@@ -379,6 +386,13 @@ const groupBaseOption = {
 };
 
 const serviceConfigs = [
+  {
+    key: 'captcha',
+    name: '人机验证',
+    icon: 'https://fastly.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Bot.png',
+    rules: ['RULE-SET,captcha,人机验证'],
+    direct: true,
+  },
   {
     key: 'ai',
     name: 'AI',
@@ -417,12 +431,14 @@ const serviceConfigs = [
     name: 'Microsoft',
     icon: 'https://fastly.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Microsoft.png',
     rules: ['RULE-SET,microsoft,Microsoft'],
+    direct: true,
   },
   {
     key: 'apple',
     name: 'Apple',
     icon: 'https://fastly.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Apple.png',
     rules: ['RULE-SET,apple,Apple'],
+    direct: true,
   },
   {
     key: 'telegram',
@@ -482,6 +498,7 @@ const serviceConfigs = [
     name: 'Spotify',
     icon: 'https://fastly.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Spotify.png',
     rules: ['RULE-SET,spotify,Spotify'],
+    direct: true,
   },
   {
     key: 'tiktok',
@@ -639,11 +656,7 @@ function main(config) {
       let groupProxies;
       if (svc.reject) {
         groupProxies = ['REJECT', 'REJECT-DROP', 'PASS'];
-      } else if (
-        svc.key === 'microsoft' ||
-        svc.key === 'apple' ||
-        svc.key === 'spotify'
-      ) {
+      } else if (svc.direct) {
         groupProxies = ['默认代理', '直连', ...regionGroupNames];
       } else if (svc.key === 'googlefcm') {
         groupProxies = ['直连', '默认代理', ...regionGroupNames];

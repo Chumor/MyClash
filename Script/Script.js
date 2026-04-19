@@ -224,6 +224,12 @@ const ruleProviders = {
     url: 'https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/category-ntp.mrs',
     path: './ruleset/category-ntp.mrs',
   },
+  captcha: {
+    ...ruleProviderCommonDomain,
+    ...ruleProviderFormatMrs,
+    url: 'https://fastly.jsdelivr.net/gh/echs-top/proxy@main/rules/mrs/captcha_domain.mrs',
+    path: './ruleset/captcha.mrs',
+  },
 };
 
 // --- 2. 功能策略组数据结构 ---
@@ -239,6 +245,12 @@ const groupBaseOption = {
 };
 
 const serviceConfigs = [
+  {
+    key: 'captcha',
+    name: '人机验证',
+    icon: 'https://fastly.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Bot.png',
+    direct: true,
+  },
   {
     key: 'ai',
     name: 'AI',
@@ -263,11 +275,13 @@ const serviceConfigs = [
     key: 'microsoft',
     name: 'Microsoft',
     icon: 'https://fastly.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Microsoft.png',
+    direct: true,
   },
   {
     key: 'apple',
     name: 'Apple',
     icon: 'https://fastly.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Apple.png',
+    direct: true,
   },
   {
     key: 'telegram',
@@ -422,7 +436,7 @@ function main(config) {
     let groupProxies;
     if (svc.reject) {
       groupProxies = ['REJECT', 'REJECT-DROP', 'PASS'];
-    } else if (svc.key === 'microsoft' || svc.key === 'apple') {
+    } else if (svc.direct) {
       groupProxies = ['默认代理', '直连', ...regionGroupNames];
     } else {
       groupProxies = ['默认代理', ...regionGroupNames];
@@ -650,6 +664,7 @@ function main(config) {
     'RULE-SET,adblockmihomolite,广告拦截',
 
     // 代理规则（域名）
+    'RULE-SET,captcha,人机验证',
     'RULE-SET,ai,AI',
     'RULE-SET,youtube,YouTube',
     'RULE-SET,google,Google',
